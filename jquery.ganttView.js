@@ -230,12 +230,13 @@ behavior: {
                     var series = data[i].series[j];
                     var size = DateUtils.daysBetween(series.start, series.end) + 1;
 					var offset = DateUtils.daysBetween(start, series.start);
-					var block = jQuery("<div>", {
+					var block = jQuery("<div>", {						
                         "class": "ganttview-block",
                         "title": series.name + ", " + size + " days",
                         "css": {
+							"position":"relative",
                             "width": ((size * cellWidth) - 9) + "px",
-                            "margin-left": ((offset * cellWidth) + 3) + "px"
+                            "left": ((offset * cellWidth) + 3) + "px"
                         }
                     });
                     addBlockData(block, data[i], series);
@@ -252,7 +253,7 @@ behavior: {
         function addBlockData(block, data, series) {
         	// This allows custom attributes to be added to the series data objects
         	// and makes them available to the 'data' argument of click, resize, and drag handlers
-        	var blockData = { id: data.id, name: data.name };
+        	var blockData = { id: data.id, name: data.name,group:data.group };
         	jQuery.extend(blockData, series);
         	block.data("block-data", blockData);
         }
@@ -326,7 +327,7 @@ behavior: {
         
         function bindBlockDrag(div, cellWidth, startDate, callback) {
         	jQuery("div.ganttview-block", div).draggable({
-        		axis: "x,y", 
+        		axis: "x", 
         		grid: [cellWidth, cellWidth],
         		stop: function () {
         			var block = jQuery(this);
@@ -345,7 +346,9 @@ behavior: {
 			var daysFromStart = Math.round(offset / cellWidth);
 			var newStart = startDate.clone().addDays(daysFromStart);
 			block.data("block-data").start = newStart;
-
+			var groupId = block.data("block-data").group;
+			console.log(groupId);
+			var groupBlock=jQuery("div.ganttview-slide-container", div);
 			// Set new end date
         	var width = block.outerWidth();
 			var numberOfDays = Math.round(width / cellWidth) - 1;
@@ -354,8 +357,8 @@ behavior: {
 			
 			// Remove top and left properties to avoid incorrect block positioning,
         	// set position to relative to keep blocks relative to scrollbar when scrolling
-			block.css("top", "").css("left", "")
-				.css("position", "relative").css("margin-left", offset + "px");
+			block.css("top", "")
+				.css("position", "relative").css("left", offset + "px");
         }
         
         return {

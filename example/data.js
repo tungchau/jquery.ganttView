@@ -1,14 +1,14 @@
 var ganttData = [
 	{
 		id: 1, name: "Product 1", series: [
-			{ name: "PROMO PRICE", start: new Date(2010,00,01), end: new Date(2010,00,03) },
+			{ name: "PROMO PRICE", start: new Date(2010,00,01), end: new Date(2010,00,03),group:1 },
 			{ name: "PROMO/MEDIA", start: new Date(2010,00,02), end: new Date(2010,00,05), color: "#f0f0f0" },
 			{ name: "DEAL", start: new Date(2010,00,06), end: new Date(2010,00,17), color: "#e0e0e0" }
 		]
 	}, 
 	{
 		id: 2, name: "Product 2", series: [
-			{ name: "PROMO PRICE", start: new Date(2010,00,05), end: new Date(2010,00,20) },
+			{ name: "PROMO PRICE", start: new Date(2010,00,05), end: new Date(2010,00,20),group:1 },
 			{ name: "PROMO/MEDIA", start: new Date(2010,00,06), end: new Date(2010,00,17), color: "#f0f0f0" },
 			{ name: "DEAL", start: new Date(2010,00,06), end: new Date(2010,00,17), color: "#e0e0e0" }
 		]
