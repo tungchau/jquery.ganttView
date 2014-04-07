@@ -1,7 +1,10 @@
 /*
+Original
 jQuery.ganttView v.0.8.8
 Copyright (c) 2010 JC Grubbs - jc.grubbs@devmynd.com
 MIT License Applies
+
+Modified by Tung Chau -  2014-04-07
 */
 
 /*
@@ -15,9 +18,11 @@ slideWidth: number
 dataUrl: string
 behavior: {
 	clickable: boolean,
+	rightclickable: boolean,
 	draggable: boolean,
-	resizable: boolean,
+	resizable: boolean,	
 	onClick: function,
+	onRightClick: function,
 	onDrag: function,
 	onResize: function
 }
@@ -49,8 +54,9 @@ behavior: {
             vHeaderWidth: 100,
             behavior: {
             	clickable: true,
+				contextmenuenable: true,
             	draggable: true,
-            	resizable: true
+            	resizable: true,				
             }
         };
         
@@ -269,6 +275,9 @@ behavior: {
 			if (opts.behavior.clickable) { 
             	bindBlockClick(div, opts.behavior.onClick); 
         	}
+			if (opts.behavior.contextmenuenable) { 				
+            	initContextMenu(div, opts.behavior.onContextMenuClick); 
+        	}
         	
             if (opts.behavior.resizable) { 
             	bindBlockResize(div, opts.cellWidth, opts.start, opts.behavior.onResize); 
@@ -280,11 +289,29 @@ behavior: {
 		}
 
         function bindBlockClick(div, callback) {
-            jQuery("div.ganttview-block", div).live("click", function () {
+            jQuery("div.ganttview-block", div).on("click", function () {
                 if (callback) { callback(jQuery(this).data("block-data")); }
             });
         }
-        
+		function initContextMenu(div, callback) {
+			jQuery(div).contextmenu({
+				delegate: div,
+		preventContextMenuForPopup: true,
+		preventSelect: true,
+		taphold: true,
+		menu: [
+			{title: "Create", cmd: "create", uiIcon: "ui-icon-clipboard", disabled: true },
+			{title: "Edit", cmd: "edit", uiIcon: "ui-icon-scissors"},
+			{title: "Delete", cmd: "delete", uiIcon: "ui-icon-copy"},			
+			{title: "----"},
+			{title: "Submit", cmd: "submit", uiIcon: "ui-icon-copy"},
+			{title: "Confirm", cmd: "confirm", uiIcon: "ui-icon-copy"}
+			],
+		select: function(event, ui) {			
+			 if (callback) { callback(ui.cmd,ui.target.data("block-data"));	}
+			 }
+        });
+		}
         function bindBlockResize(div, cellWidth, startDate, callback) {
         	jQuery("div.ganttview-block", div).resizable({
         		grid: cellWidth, 
@@ -299,7 +326,7 @@ behavior: {
         
         function bindBlockDrag(div, cellWidth, startDate, callback) {
         	jQuery("div.ganttview-block", div).draggable({
-        		axis: "x", 
+        		axis: "x,y", 
         		grid: [cellWidth, cellWidth],
         		stop: function () {
         			var block = jQuery(this);
